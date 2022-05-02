@@ -1,18 +1,11 @@
 require "json"
-require "activerecord"
-
-# Define the models
-class Show < ActiveRecord::Base
-  has_many :episodes, inverse_of: :show
-end
-
-class Episode < ActiveRecord::Base
-  belongs_to :show, inverse_of: :episodes, required: true
-end
+require "active_record"
+require_relative "show"
+require_relative "episode"
 
 def lambda_handler(event:, context:)
   require "sqlite3"
-  require "activerecord"
+
   # Change working directory to /tmp so we can write files
   Dir.chdir("/tmp")
   db = SQLite3::Database.new "test.db"

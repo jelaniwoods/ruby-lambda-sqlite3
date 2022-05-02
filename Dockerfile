@@ -3,13 +3,16 @@ FROM public.ecr.aws/lambda/ruby:2.7
 RUN yum update -y && yum install tar wget -y
 RUN yum groupinstall "Development Tools" -y
 WORKDIR sqlite3
-RUN wget https://www.sqlite.org/2022/sqlite-autoconf-3380300.tar.gz
-RUN tar xvfz sqlite-autoconf-3380300.tar.gz
-RUN cd sqlite-autoconf-3380300 && ./configure && make && make install
-
+# Install sqlite3 version 3.8 on CentOS
+# https://stackoverflow.com/a/70959361/10481804
+RUN wget https://kojipkgs.fedoraproject.org//packages/sqlite/3.8.11/1.fc21/x86_64/sqlite-devel-3.8.11-1.fc21.x86_64.rpm
+RUN wget https://kojipkgs.fedoraproject.org//packages/sqlite/3.8.11/1.fc21/x86_64/sqlite-3.8.11-1.fc21.x86_64.rpm
+RUN yum install sqlite-3.8.11-1.fc21.x86_64.rpm sqlite-devel-3.8.11-1.fc21.x86_64.rpm -y
 WORKDIR ${LAMBDA_TASK_ROOT}
 # Copy function code
 COPY app.rb ${LAMBDA_TASK_ROOT}
+COPY show.rb ${LAMBDA_TASK_ROOT}
+COPY episode.rb ${LAMBDA_TASK_ROOT}
 
 # Copy dependency management file
 COPY Gemfile ${LAMBDA_TASK_ROOT}
