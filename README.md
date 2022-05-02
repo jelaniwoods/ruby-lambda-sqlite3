@@ -36,3 +36,4 @@ Afterwards go to Lambda service and create function. When you do choose the "Con
 - [Base Dockerfile from AWS](https://gallery.ecr.aws/lambda/ruby)
 - [Testing Lambda container images locally](https://docs.aws.amazon.com/lambda/latest/dg/images-test.html)
 - [ActiveRecord and sqlite3 : find does not accept any condition?](https://stackoverflow.com/questions/8329790/activerecord-and-sqlite3-find-does-not-accept-any-condition)
+- [Install sqlite3 3.8 on CentOS](https://stackoverflow.com/a/70959361/10481804)

@@ -42,6 +42,6 @@ def lambda_handler(event:, context:)
     body: {
       message: "Hello World!",
       out: result,
-    }.to_json,
+    }.to_json
   }
 end

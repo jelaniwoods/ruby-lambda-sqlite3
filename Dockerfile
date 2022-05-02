@@ -2,9 +2,7 @@ FROM public.ecr.aws/lambda/ruby:2.7
 # Install and build sqlite3
 RUN yum update -y && yum install tar wget -y
 RUN yum groupinstall "Development Tools" -y
-WORKDIR sqlite3
-# Install sqlite3 version 3.8 on CentOS
-# https://stackoverflow.com/a/70959361/10481804
+WORKDIR /sqlite3
 RUN wget https://kojipkgs.fedoraproject.org//packages/sqlite/3.8.11/1.fc21/x86_64/sqlite-devel-3.8.11-1.fc21.x86_64.rpm
 RUN wget https://kojipkgs.fedoraproject.org//packages/sqlite/3.8.11/1.fc21/x86_64/sqlite-3.8.11-1.fc21.x86_64.rpm
 RUN yum install sqlite-3.8.11-1.fc21.x86_64.rpm sqlite-devel-3.8.11-1.fc21.x86_64.rpm -y
