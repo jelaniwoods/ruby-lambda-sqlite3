@@ -35,3 +35,4 @@ Afterwards go to Lambda service and create function. When you do choose the "Con
 - https://stackoverflow.com/questions/46282576/cannot-open-database-file-error-when-running-on-aws-lambda
 - [Base Dockerfile from AWS](https://gallery.ecr.aws/lambda/ruby)
 - [Testing Lambda container images locally](https://docs.aws.amazon.com/lambda/latest/dg/images-test.html)
+- [ActiveRecord and sqlite3 : find does not accept any condition?](https://stackoverflow.com/questions/8329790/activerecord-and-sqlite3-find-does-not-accept-any-condition)
