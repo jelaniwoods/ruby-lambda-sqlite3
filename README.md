@@ -18,6 +18,24 @@ I was only able to get this to work using a custom container image.
    curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{}'
    ```
 
+You can configure the structure of the test Event JSON with the last `{}` argument.
+
+For example, if your Event looks like:
+
+```json
+{
+  "queryStringParameters": {
+      "query": "Character.all.pluck(:name).first(5)",
+      "database": "msm"
+  }
+}
+```
+
+You can send the request like so:
+
+```bash
+curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations -d '{"queryStringParameters": { "query": "Character.all.pluck(:name).first(5)", "database": "msm" } }'
+```
 ## Deploying
 
 First you need to create an [ECR repository](http://console.aws.amazon.com/ecr/repositories) to host your image. You can create one with the default settings. To push your image, click the "View push commands" button and a popup should provide commands for you to copy-paste:
