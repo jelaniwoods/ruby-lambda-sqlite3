@@ -1,47 +1,33 @@
 require "json"
 require "active_record"
-require_relative "show"
-require_relative "episode"
+require "sqlite3"
+require 'fileutils'
+# Require models
+Dir[File.join(__dir__, "models", "*.rb")].each { |file| require_relative file }
 
+# choose db, query to eval
 def lambda_handler(event:, context:)
-  require "sqlite3"
-
-  # Change working directory to /tmp so we can write files
-  Dir.chdir("/tmp")
-  db = SQLite3::Database.new "test.db"
-
+  query_string = event["queryStringParameters"]
+  db_query = "Movie.all"
+  database = "msm"
+  if !query_string.nil?
+    db_query = query_string["query"]
+    database = query_string["database"]
+  end
+  # It appears I need to freshly copy the db to the /tmp/ folder at runtime
+  # The file from the image doesn't register
+  FileUtils.cp("#{database}.sqlite3", "/tmp/")
   ActiveRecord::Base.establish_connection(
     adapter: "sqlite3",
-    database: "/tmp/test.db",
+    database: "/tmp/#{database}.sqlite3",
   )
 
-  # Define a minimal database schema
-  ActiveRecord::Schema.define do
-    create_table :shows, force: true do |t|
-      t.string :name
-    end
-
-    create_table :episodes, force: true do |t|
-      t.string :name
-      t.belongs_to :show, index: true
-    end
-  end
-
-  # Create a few records...
-  show = Show.create!(name: "Infinity Train")
-
-  first_episode = show.episodes.create!(name: "Infinity Train")
-  second_episode = show.episodes.create!(name: "The Number Car")
-
-  episode_names = show.episodes.pluck(:name)
-
-  result = "#{show.name} has #{show.episodes.size} episodes named #{episode_names.join(", ")}."
-
+  result = eval(db_query)
   {
     statusCode: 200,
     body: {
       message: "Hello World!",
       out: result,
-    }.to_json
+    }.to_json,
   }
 end

@@ -9,11 +9,13 @@ RUN yum install sqlite-3.8.11-1.fc21.x86_64.rpm sqlite-devel-3.8.11-1.fc21.x86_6
 WORKDIR ${LAMBDA_TASK_ROOT}
 # Copy function code
 COPY app.rb ${LAMBDA_TASK_ROOT}
-COPY show.rb ${LAMBDA_TASK_ROOT}
-COPY episode.rb ${LAMBDA_TASK_ROOT}
+COPY models/* models/
 
 # Copy dependency management file
 COPY Gemfile ${LAMBDA_TASK_ROOT}
+# TODO can I immediately save it to /tmp/?
+# COPY msm.sqlite3 /tmp/
+COPY msm.sqlite3 ${LAMBDA_TASK_ROOT}
 # Install dependencies under LAMBDA_TASK_ROOT
 ENV GEM_HOME=${LAMBDA_TASK_ROOT}
 
