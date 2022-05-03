@@ -23,11 +23,13 @@ def lambda_handler(event:, context:)
   )
 
   result = eval(db_query)
+  test_output = `QUERY='#{db_query}' ruby test/query_tests.rb`
   {
     statusCode: 200,
     body: {
-      message: "Hello World!",
-      out: result,
+      query: db_query,
+      return_value: result,
+      test_results: JSON.parse(test_output)
     }.to_json,
   }
 end

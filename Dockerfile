@@ -10,6 +10,7 @@ WORKDIR ${LAMBDA_TASK_ROOT}
 # Copy function code
 COPY app.rb ${LAMBDA_TASK_ROOT}
 COPY models/* models/
+COPY test/* test/
 
 # Copy dependency management file
 COPY Gemfile ${LAMBDA_TASK_ROOT}

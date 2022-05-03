@@ -13,7 +13,7 @@ class QueryTests < Minitest::Test
     )
 
     query = ENV['QUERY']
-    p "User query is: #{query}"
+    # p "User query is: #{query}"
     # TODO make sure multi-line queries work
     @result = eval(query)
   end
