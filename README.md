@@ -26,7 +26,8 @@ For example, if your Event looks like:
 {
   "queryStringParameters": {
       "query": "Character.all.pluck(:name).first(5)",
-      "database": "msm"
+      "database": "msm",
+      "level": "one"
   }
 }
 ```
@@ -34,7 +35,7 @@ For example, if your Event looks like:
 You can send the request like so:
 
 ```bash
-curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations -d '{"queryStringParameters": { "query": "Character.all.pluck(:name).first(5)", "database": "msm" } }'
+curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations -d '{"queryStringParameters": { "query": "Character.all.pluck(:name).first(5)", "database": "msm", "level": "one" } }'
 ```
 ## Deploying
 

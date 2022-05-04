@@ -21,5 +21,4 @@ class QueryTests < Minitest::Test
   def test_filter
     assert_includes @result, Movie.find_by(director_id: 1)
   end
-  
 end
