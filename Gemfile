@@ -4,4 +4,5 @@ gem "sqlite3"
 gem "activerecord"
 gem "minitest"
 gem "minitest-reporters-json_reporter"
+gem "rspec"
 ruby '~> 2.7.0'
