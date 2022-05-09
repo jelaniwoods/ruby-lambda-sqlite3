@@ -37,7 +37,7 @@ def lambda_handler(event:, context:)
     adapter: "sqlite3",
     database: "/tmp/#{database}.sqlite3",
   )
-  # Write spec
+
   specs = payload["specs"]
   Dir.mkdir('/tmp/spec/')
   write_spec_helper
@@ -45,15 +45,10 @@ def lambda_handler(event:, context:)
     filename = spec["name"]
     body = spec["body"]
     write_spec(filename, body)
-    puts '-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|'
-    puts `cat /tmp/spec/uuid_spec.rb`
-    puts '_______________________'
   end
 
   result = eval(db_query)
   # minitest_output = `QUERY='#{db_query}' ruby test/level_#{level}_tests.rb`
-  # TODO eventually run all specs
-  # rspec_test_output = `QUERY='#{db_query}' ruby /tmp/spec/uuid_spec.rb --format j`
   puts rspec_test_output = `QUERY='#{db_query}' bundle exec rspec /tmp/spec/ --format j`
 
   {
@@ -86,7 +81,7 @@ describe "Level one" do
   tmp_file.write(connect_to_db)
   tmp_file.write(eval_query)
   tmp_file.write(body)
-  # close the "decribe" block
+  # close the "describe" block
   tmp_file.write("\nend")
   tmp_file.close
   filename
@@ -102,10 +97,11 @@ end
 
 def write_spec_helper
   content = <<~RUBY
-  # require 'rspec/autorun'
   require 'active_record'
   require 'sqlite3'
-  Dir[File.join("/var", "task", "models", "*.rb")].each { |file| require_relative file }
+  Dir[File.join("/var", "task", "models", "*.rb")].each do
+    |file| require_relative file
+  end
   RUBY
   filename = "/tmp/spec/spec_helper.rb"
   tmp_file = File.open(filename, "a")
