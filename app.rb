@@ -52,7 +52,9 @@ def lambda_handler(event:, context:)
 
   result = eval(db_query)
   # minitest_output = `QUERY='#{db_query}' ruby test/level_#{level}_tests.rb`
-  rspec_test_output = `QUERY='#{db_query}' ruby /tmp/spec/uuid_spec.rb --format j`
+  # TODO eventually run all specs
+  # rspec_test_output = `QUERY='#{db_query}' ruby /tmp/spec/uuid_spec.rb --format j`
+  puts rspec_test_output = `QUERY='#{db_query}' bundle exec rspec /tmp/spec/ --format j`
 
   {
     statusCode: 200,
@@ -100,7 +102,7 @@ end
 
 def write_spec_helper
   content = <<~RUBY
-  require 'rspec/autorun'
+  # require 'rspec/autorun'
   require 'active_record'
   require 'sqlite3'
   Dir[File.join("/var", "task", "models", "*.rb")].each { |file| require_relative file }
