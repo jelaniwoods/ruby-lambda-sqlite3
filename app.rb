@@ -25,6 +25,7 @@ def lambda_handler(event:, context:)
   db_query = "Movie.all"
   database = "msm"
   level = "one"
+  # Handle this gracefully
   if !payload.nil?
     db_query = payload.fetch("query", db_query)
     database = payload.fetch("database", database)
