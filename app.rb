@@ -48,16 +48,16 @@ def lambda_handler(event:, context:)
     write_model(filename, body)
   end
   result = eval(query)
-  # minitest_output = `QUERY='#{query}' ruby test/level_#{level}_tests.rb`
-  puts rspec_test_output = `QUERY='#{query}' bundle exec rspec /tmp/spec/ --format j`
+  # minitest_output = minitest_output(query)
+  puts rspec_test_output = rspec_output(query)
 
   {
     statusCode: 200,
     body: {
       query: query,
       return_value: result,
-      # minitest_results: JSON.parse(minitest_output),
-      rspec_test_results: JSON.parse(rspec_test_output)
+      # minitest_output: JSON.parse(minitest_output),
+      rspec_test_output: JSON.parse(rspec_test_output)
     }.to_json,
   }
 end
@@ -96,6 +96,13 @@ def write_model(filename, body)
   filename
 end
 
+def minitest_output(query)
+  # `QUERY='#{query}' ruby test/level_#{level}_tests.rb`
+end
+
+def rspec_output(query)
+  `QUERY='#{query}' bundle exec rspec /tmp/spec/ --format j`
+end
 def eval_query
   # TODO make sure multi-line queries work
   <<-RUBY
