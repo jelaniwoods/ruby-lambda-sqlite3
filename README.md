@@ -87,6 +87,11 @@ First you need to create an [ECR repository](http://console.aws.amazon.com/ecr/r
 
 Afterwards go to Lambda service and create function. When you do choose the "Container image" option and click "browse images", select the image you created, and click "Create Function". 
 
+---
+You can only write files that exist in the `/tmp` folder.
+
+> Note that the /tmp is inside the function's execution environment and you do not have access to it from outside the function. If you want to save a file that you can access it externally, you should either save it to S3 or mount an EFS volume and write the file there.
+
 
 ### Main References
 - [What is AWS Lambda Container Image?](https://aws.plainenglish.io/aws-lambda-container-image-a5eab06a445)
@@ -96,3 +101,4 @@ Afterwards go to Lambda service and create function. When you do choose the "Con
 - [Testing Lambda container images locally](https://docs.aws.amazon.com/lambda/latest/dg/images-test.html)
 - [ActiveRecord and sqlite3 : find does not accept any condition?](https://stackoverflow.com/questions/8329790/activerecord-and-sqlite3-find-does-not-accept-any-condition)
 - [Install sqlite3 3.8 on CentOS](https://stackoverflow.com/a/70959361/10481804)
+- [Save a file to a tmp folder lambda](https://repost.aws/questions/QUBy1WCApySnOYyMsXLLfNqg/how-to-save-a-file-to-a-tmp-temp-folder-in-lambda)
