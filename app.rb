@@ -22,15 +22,9 @@ Dir[File.join(__dir__, "models", "*.rb")].each { |file| require_relative file }
 #   }
 def lambda_handler(event:, context:)
   payload = event["payload"]
-  db_query = "Movie.all"
-  database = "msm"
-  level = "one"
-  # Handle this gracefully
-  if !payload.nil?
-    db_query = payload.fetch("query", db_query)
-    database = payload.fetch("database", database)
-    level = payload.fetch("level", level)
-  end
+  keys = %w{query database level specs models}
+  query, database, level, specs, models = payload.values_at(*keys)
+
   # It appears I need to freshly copy the db to the /tmp/ folder at runtime
   # The file from the image doesn't register
   FileUtils.cp("#{database}.sqlite3", "/tmp/")
@@ -39,7 +33,6 @@ def lambda_handler(event:, context:)
     database: "/tmp/#{database}.sqlite3",
   )
 
-  specs = payload["specs"]
   Dir.mkdir('/tmp/spec/')
   write_spec_helper
   specs.each do |spec|
@@ -48,14 +41,14 @@ def lambda_handler(event:, context:)
     write_spec(filename, body)
   end
 
-  result = eval(db_query)
-  # minitest_output = `QUERY='#{db_query}' ruby test/level_#{level}_tests.rb`
-  puts rspec_test_output = `QUERY='#{db_query}' bundle exec rspec /tmp/spec/ --format j`
+  result = eval(query)
+  # minitest_output = `QUERY='#{query}' ruby test/level_#{level}_tests.rb`
+  puts rspec_test_output = `QUERY='#{query}' bundle exec rspec /tmp/spec/ --format j`
 
   {
     statusCode: 200,
     body: {
-      query: db_query,
+      query: query,
       return_value: result,
       # minitest_results: JSON.parse(minitest_output),
       rspec_test_results: JSON.parse(rspec_test_output)
