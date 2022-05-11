@@ -33,7 +33,9 @@ def lambda_handler(event:, context:)
     database: "/tmp/#{database}.sqlite3",
   )
 
-  Dir.mkdir('/tmp/spec/')
+  # Create spec and models folders
+  Dir.mkdir('/tmp/spec') #unless Dir.exist?('/tmp/spec')
+  Dir.mkdir('/tmp/models')# unless Dir.exist?('/tmp/models/')
   write_spec_helper
   specs.each do |spec|
     filename = spec["name"]
