@@ -12,7 +12,7 @@ require "fileutils"
 #       "level": "one",
 #       "specs": [
 #         {
-#          "name": "uuid",
+#           "name": "uuid",
 #           "body": "it \"should do include a Movie from the first Director\" do\n    expect(results).to include Movie.find_by(director_id: 1)\n  end"
 #         }
 #       ],
