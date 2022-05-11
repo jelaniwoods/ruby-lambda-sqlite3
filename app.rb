@@ -43,6 +43,10 @@ def lambda_handler(event:, context:)
     write_spec(filename, body)
   end
 
+  models.each do |model|
+    filename, body = model.values_at("name", "body")
+    write_model(filename, body)
+  end
   result = eval(query)
   # minitest_output = `QUERY='#{query}' ruby test/level_#{level}_tests.rb`
   puts rspec_test_output = `QUERY='#{query}' bundle exec rspec /tmp/spec/ --format j`
@@ -79,6 +83,15 @@ describe "Level one" do
   tmp_file.write(body)
   # close the "describe" block
   tmp_file.write("\nend")
+  tmp_file.close
+  filename
+end
+
+def write_model(filename, body)
+  filename = "/tmp/models/#{filename}"
+  tmp_file = File.open(filename, "a")
+  tmp_file.seek(0)
+  tmp_file.write(body)
   tmp_file.close
   filename
 end
