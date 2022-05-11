@@ -1,7 +1,7 @@
 require "json"
 require "active_record"
 require "sqlite3"
-require 'fileutils'
+require "fileutils"
 # Require models
 Dir[File.join(__dir__, "models", "*.rb")].each { |file| require_relative file }
 
