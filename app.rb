@@ -30,11 +30,9 @@ def lambda_handler(event:, context:)
   keys = %w{query database level specs models}
   query, database, level, specs, models = payload.values_at(*keys)
 
+  recreate_directories
   connect_to_db(database)
 
-  # Create spec and models folders
-  Dir.mkdir("/tmp/spec") unless Dir.exist?('/tmp/spec')
-  Dir.mkdir("/tmp/models") unless Dir.exist?('/tmp/models/')
   write_spec_helper
 
   specs.each do |spec|
@@ -55,7 +53,6 @@ def lambda_handler(event:, context:)
   # minitest_output = minitest_output(query)
   rspec_test_output = rspec_output(query)
 
-  # TODO maybe extract this as well
   {
     statusCode: 200,
     body: {
@@ -138,7 +135,7 @@ def render_error(message)
 end
 
 def connect_to_db(database)
-  # It appears I need to freshly copy the db to the /tmp/ folder at runtime
+  File.delete("#{database}.sqlite3") if File.exists?("/tmp/#{database}.sqlite3")
   FileUtils.cp("#{database}.sqlite3", "/tmp/")
   # TODO Why is this required in the function?
   # shouldn't it just need to be in the spec file?
@@ -146,4 +143,11 @@ def connect_to_db(database)
     adapter: "sqlite3",
     database: "/tmp/#{database}.sqlite3",
   )
+end
+
+def recreate_directories
+  FileUtils.rm_rf("/tmp/spec")
+  FileUtils.rm_rf("/tmp/models")
+  Dir.mkdir("/tmp/spec")
+  Dir.mkdir("/tmp/models")
 end
