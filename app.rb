@@ -135,7 +135,7 @@ def render_error(message)
 end
 
 def connect_to_db(database)
-  File.delete("#{database}.sqlite3") if File.exists?("/tmp/#{database}.sqlite3")
+  File.delete("/tmp/#{database}.sqlite3") if File.exists?("/tmp/#{database}.sqlite3")
   FileUtils.cp("#{database}.sqlite3", "/tmp/")
   # TODO Why is this required in the function?
   # shouldn't it just need to be in the spec file?
