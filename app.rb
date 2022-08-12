@@ -28,7 +28,14 @@ require "awesome_print"
 def lambda_handler(event:, context:)
   # TODO: Handle this gracefully
   # TODO: if there's an error, it seems to just respond with "" until server restarts- Why?
-  payload = event.fetch("payload")
+  ap event
+  puts "\n\n-----------body----------\n\n"
+  body = event["body"]
+  p body
+  puts "\n\n----------json-----------\n\n"
+  p json = JSON.parse(body)
+  puts "\n\n---------payload------------\n\n"
+  payload = json.fetch("payload")
   ap payload
   keys = %w{query database level specs models}
   query, database, level, specs, models = payload.values_at(*keys)
