@@ -1,4 +1,4 @@
 class Movie < ActiveRecord::Base
-  belongs_to :director
-  has_many :characters
+  # belongs_to :director
+  # has_many :characters
 end

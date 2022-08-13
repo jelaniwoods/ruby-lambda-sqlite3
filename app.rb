@@ -33,9 +33,10 @@ def lambda_handler(event:, context:)
   body = event["body"]
   p body
   puts "\n\n----------json-----------\n\n"
-  p json = JSON.parse(body)
+  # p json = JSON.parse(body)
   puts "\n\n---------payload------------\n\n"
-  payload = json.fetch("payload")
+  payload = event.fetch("payload")
+  # payload = json.fetch("payload")
   ap payload
   keys = %w{query database level specs models}
   query, database, level, specs, models = payload.values_at(*keys)
@@ -62,7 +63,8 @@ def lambda_handler(event:, context:)
   Dir[File.join("/tmp", "models", "*.rb")].each do |file|
     require_relative file
   end
-  puts "======\n\n"
+  ap $".select{|r| r.include? '/tmp/models'}
+  puts "\n======\n\n"
   Dir[File.join("/tmp", "models", "*.rb")].each do |file|
     p file
     puts "----"
@@ -73,9 +75,48 @@ def lambda_handler(event:, context:)
   puts "evaluating query..."
   result = ""
   begin
-    result = eval(query)
+    puts "write to file and get output"
+    # -----------------
+    content = <<~RUBY
+      require 'active_record'
+      require 'sqlite3'
+      Dir[File.join("/tmp", "models", "*.rb")].each do |file|
+        require_relative file
+      end
+      def query
+        return #{query}
+      end
+    RUBY
+    puts content
+    filename = "/tmp/query.rb"
+    if File.exists?(filename)
+      puts "deleted existing #{filename} and recreating"
+      File.delete(filename)
+      # un-require query, if being run quickly
+      ap query_script = $".select{|r| r.include? filename}
+      $".delete(query_script.first)
+      puts "removed-"
+      ap $".select{|r| r.include? filename}
+    end
+    tmp_file = File.open(filename, "a")
+    tmp_file.seek(0)
+    tmp_file.write(content)
+    tmp_file.close
+    puts "requiring query..."
+    ap x = require(filename)
+    ap $".select{|r| r.include? filename}
+    ap query()
+    puts "eval"
+    ap result = eval(query)
+    # puts "backtick"
+    # ap `#{query}`
+    puts "__________________________done__"
+    # ap `ruby-e '#{}'`
+    # ap `ruby -e 'require "json"; require "active_record"; require "sqlite3"; require "fileutils"; require "awesome_print"; ActiveRecord::Base.establish_connection(adapter: "sqlite3",database: "msm.sqlite3"); Dir[File.join("models", "*.rb")].each do |file| require("#{Dir.pwd}/#{file}");  end; p "d"; #{}'`
 
   rescue => exception
+    puts "EXCEPTION"
+    ap exception
     result = exception.message
   end
   return_class = result.class.to_s
@@ -192,7 +233,14 @@ def recreate_directories
   FileUtils.rm_rf("/tmp/models")
   Dir.mkdir("/tmp/spec")
   Dir.mkdir("/tmp/models")
+  puts "old required models:\n\n"
+  ap old_models = $".select{|r| r.include? '/tmp/models'}
+  old_models.each do |m|
+    ap m
+    $".delete(m)
+  end
   puts "should be empty"
+  ap $".select{|r| r.include? '/tmp/models'}
   Dir[File.join("/tmp", "models", "*.rb")].each do |file|
     puts file
     puts open(file).read
