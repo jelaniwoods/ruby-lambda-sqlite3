@@ -29,14 +29,15 @@ def lambda_handler(event:, context:)
   # TODO: Handle this gracefully
   # TODO: if there's an error, it seems to just respond with "" until server restarts- Why?
   ap event
+  p event.class
   puts "\n\n-----------body----------\n\n"
   body = event["body"]
   p body
   puts "\n\n----------json-----------\n\n"
-  # p json = JSON.parse(body)
+  p json = JSON.parse(body)
   puts "\n\n---------payload------------\n\n"
-  payload = event.fetch("payload")
-  # payload = json.fetch("payload")
+  # payload = event.fetch("payload") # for dev
+  payload = json.fetch("payload")  # for prod
   ap payload
   keys = %w{query database level specs models}
   query, database, level, specs, models = payload.values_at(*keys)
@@ -84,7 +85,7 @@ def lambda_handler(event:, context:)
         require_relative file
       end
       def query
-        return #{query}
+        #{query}
       end
     RUBY
     puts content
