@@ -101,6 +101,10 @@ You can only write files that exist in the `/tmp` folder.
 > Note that the /tmp is inside the function's execution environment and you do not have access to it from outside the function. If you want to save a file that you can access it externally, you should either save it to S3 or mount an EFS volume and write the file there.
 
 
+#### Running Tests Inside the Function
+
+Currently only runs `rspec` tests with plans to have the option of running `minitest`. The database query from the request is passed to the spec file via an environment variable and then it's `eval`'d before each spec using the `let` helper method. When sending a request, you can write specs with the assumption that the variable `results` will be available containing the results of the Ruby expression from the request.
+
 ### Main References
 - [What is AWS Lambda Container Image?](https://aws.plainenglish.io/aws-lambda-container-image-a5eab06a445)
 - [Using container images with AWS Lambda](https://hichaelmart.medium.com/using-container-images-with-aws-lambda-7ffbd23697f1)
