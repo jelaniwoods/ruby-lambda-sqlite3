@@ -37,7 +37,7 @@ def lambda_handler(event:, context:)
 
   specs.each do |spec|
     filename, body = spec.values_at("name", "body")
-    write_spec(filename, body)
+    write_spec(filename, body, level)
   end
 
   models.each do |model|
@@ -64,15 +64,14 @@ def lambda_handler(event:, context:)
   }
 end
 
-def write_spec(filename, body)
+def write_spec(filename, body, level)
   filename = "/tmp/spec/#{filename}_spec.rb"
   tmp_file = File.open(filename, "a")
   tmp_file.seek(0)
-  # TODO organize with level name
   # TODO use specified database
   content = <<~RUBY
     require_relative './spec_helper.rb'
-    describe "Level one" do
+    describe "Level #{level}" do
       before do
         ActiveRecord::Base.establish_connection(
           adapter: "sqlite3",
