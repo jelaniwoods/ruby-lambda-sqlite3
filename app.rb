@@ -26,7 +26,9 @@ require "fileutils"
 #   }
 def lambda_handler(event:, context:)
   # TODO: Handle this gracefully
-  payload = event.fetch("payload")
+  body = event["body"]
+  json = JSON.parse(body)
+  payload = json.fetch("payload")
   keys = %w{query database level specs models}
   query, database, level, specs, models = payload.values_at(*keys)
 
