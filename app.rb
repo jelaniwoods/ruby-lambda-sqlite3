@@ -49,7 +49,7 @@ def lambda_handler(event:, context:)
     require_relative file
   end
 
-  result = eval(query)
+  result, return_class = evaluate_query(query)
   # minitest_output = minitest_output(query)
   rspec_test_output = rspec_output(query)
 
@@ -58,6 +58,7 @@ def lambda_handler(event:, context:)
     body: {
       query: query,
       return_value: result,
+      return_class: return_class,
       # minitest_output: JSON.parse(minitest_output),
       rspec_test_output: JSON.parse(rspec_test_output),
     }.to_json,
@@ -96,6 +97,26 @@ def write_model(filename, body)
   tmp_file.write(body)
   tmp_file.close
   filename
+end
+
+def evaluate_query(query)
+  begin
+    result, return_class = nil
+    result = eval(query)
+  rescue => exception
+    result = exception.message.gsub(/for #<.*>/, "for main:Object")
+    return_class = exception.class
+  rescue SyntaxError => syntax_error
+    result = syntax_error
+    return_class = syntax_error.class
+  end
+
+  return_class = result.class.to_s if return_class.to_s.empty?
+
+  if result.class.ancestors.include?(ActiveRecord::Base)
+    return_class += "::ActiveRecord::Base"
+  end
+  [result, return_class]
 end
 
 def minitest_output(query)
