@@ -26,10 +26,16 @@ require "fileutils"
 #   }
 def lambda_handler(event:, context:)
   # TODO: Handle this gracefully
-  # payload = event.fetch("payload") # For dev ENV
-  body = event["body"]               # For prod ENV
-  json = JSON.parse(body)
-  payload = json.fetch("payload")
+  payload = {}
+  if event.has_key?("payload")
+    puts "Running in development environment"
+    payload = event.fetch("payload")
+  else
+    puts "Running in production environment"
+    body = event["body"]
+    json = JSON.parse(body)
+    payload = json.fetch("payload")
+  end
   keys = %w{query database level specs models}
   query, database, level, specs, models = payload.values_at(*keys)
 
@@ -52,7 +58,7 @@ def lambda_handler(event:, context:)
     require_relative file
   end
 
-  result, return_class = evaluate_query(query)
+  result, return_class = evaluate_query(query, models)
   # minitest_output = minitest_output(query)
   rspec_test_output = rspec_output(query)
 
@@ -102,7 +108,18 @@ def write_model(filename, body)
   filename
 end
 
-def evaluate_query(query)
+def evaluate_query(query, models)
+  model_content = ""
+  models.each do |model|
+    model_content += model["body"] + "\n"
+  end
+  query = <<~STRING
+  #{model_content}
+  #{query}
+  STRING
+
+  puts "\n\nFull Query\n\n"
+  puts query
   begin
     result, return_class = nil
     result = eval(query)
