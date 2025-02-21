@@ -42,6 +42,7 @@ def lambda_handler(event:, context:)
   recreate_directories
   connect_to_db(database)
 
+  write_appdev_overrides
   write_spec_helper
 
   specs.each do |spec|
@@ -80,6 +81,7 @@ def write_spec(filename, body, level)
   tmp_file.seek(0)
   # TODO use specified database
   content = <<~RUBY
+    require "/tmp/appdev_overrides.rb"
     require_relative './spec_helper.rb'
     describe "Level #{level}" do
       before do
@@ -114,6 +116,7 @@ def evaluate_query(query, models)
     model_content += model["body"] + "\n"
   end
   query = <<~STRING
+  require "/tmp/appdev_overrides.rb"
   #{model_content}
   #{query}
   STRING
@@ -139,6 +142,32 @@ def evaluate_query(query, models)
   [result, return_class]
 end
 
+def write_appdev_overrides
+  content = <<~STRING
+  module ActiveRecord
+    module Delegation
+      alias at []
+    end
+  end
+  module ActiveRecord
+    module Calculations
+      alias map_relation_to_array pluck
+    end
+  end
+  module ActiveRecord
+    module AttributeMethods
+      alias fetch []
+      alias store []=
+    end
+  end
+  STRING
+  filename = "/tmp/appdev_overrides.rb"
+  tmp_file = File.open(filename, "a")
+  tmp_file.seek(0)
+  tmp_file.write(content)
+  tmp_file.close
+end
+
 def minitest_output(query)
   # `QUERY='#{query}' ruby test/level_#{level}_tests.rb`
 end
@@ -149,7 +178,7 @@ end
 
 def write_spec_helper
   # TODO: load models from /tmp/
-  content = <<~RUBY
+  content = <<~STRING
     require 'active_record'
     require 'sqlite3'
     Dir[File.join("/tmp", "models", "*.rb")].each do
@@ -159,7 +188,7 @@ def write_spec_helper
     #   adapter: "sqlite3",
     #   database: File.join("/tmp", "msm.sqlite3")
     # )
-  RUBY
+  STRING
   filename = "/tmp/spec/spec_helper.rb"
   tmp_file = File.open(filename, "a")
   tmp_file.seek(0)
