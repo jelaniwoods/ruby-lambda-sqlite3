@@ -42,7 +42,8 @@ def lambda_handler(event:, context:)
   recreate_directories
   connect_to_db(database)
 
-  write_appdev_overrides
+  # Broken in Ruby 3.2
+  # write_appdev_overrides
   write_spec_helper
 
   specs.each do |spec|
@@ -81,7 +82,7 @@ def write_spec(filename, body, level)
   tmp_file.seek(0)
   # TODO use specified database
   content = <<~RUBY
-    require "/tmp/appdev_overrides.rb"
+    # require "/tmp/appdev_overrides.rb"
     require_relative './spec_helper.rb'
     describe "Level #{level}" do
       before do
@@ -116,7 +117,7 @@ def evaluate_query(query, models)
     model_content += model["body"] + "\n"
   end
   query = <<~STRING
-  require "/tmp/appdev_overrides.rb"
+  # require "/tmp/appdev_overrides.rb"
   #{model_content}
   #{query}
   STRING
@@ -204,7 +205,7 @@ def render_error(message)
 end
 
 def connect_to_db(database)
-  File.delete("/tmp/#{database}.sqlite3") if File.exists?("/tmp/#{database}.sqlite3")
+  File.delete("/tmp/#{database}.sqlite3") if File.exist?("/tmp/#{database}.sqlite3")
   FileUtils.cp("#{database}.sqlite3", "/tmp/")
   # TODO Why is this required in the function?
   # shouldn't it just need to be in the spec file?
