@@ -93,7 +93,7 @@ When you test locally, take particular note of the amount of memory used:
 
 > REPORT RequestId: c135f7db-686e-4ce0-82c1-71f33311868c  Init Duration: 2.39 ms  Duration: 4403.15 ms    Billed Duration: 4404 ms     Memory Size: 3008 MB    Max Memory Used: 3008 MB
 
-![](aws-lambda-configuration.png)
+![](files/aws-lambda-configuration.png)
 
 ---
 You can only write files that exist in the `/tmp` folder.
