@@ -43,7 +43,7 @@ def lambda_handler(event:, context:)
   connect_to_db(database)
 
   # Broken in Ruby 3.2
-  # write_appdev_overrides
+  write_appdev_overrides
   write_spec_helper
 
   specs.each do |spec|
@@ -117,7 +117,7 @@ def evaluate_query(query, models)
     model_content += model["body"] + "\n"
   end
   query = <<~STRING
-  # require "/tmp/appdev_overrides.rb"
+  require "/tmp/appdev_overrides.rb"
   #{model_content}
   #{query}
   STRING
